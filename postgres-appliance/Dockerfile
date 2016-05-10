@@ -23,8 +23,8 @@ RUN export DISTRIB_CODENAME=$(sed -n 's/DISTRIB_CODENAME=//p' /etc/lsb-release) 
     && echo "deb-src http://apt.postgresql.org/pub/repos/apt/ ${DISTRIB_CODENAME}-pgdg main" >> /etc/apt/sources.list.d/pgdg.list \
     && curl -s -o - https://www.postgresql.org/media/keys/ACCC4CF8.asc | apt-key add -
 
-# Install PostgreSQL
-ENV PGVERSION=9.5 PGOLDVERSIONS="9.4"
+# Install PostgreSQL 9.5 and 9.4 as the current one
+ENV PGOLDVERSIONS="9.5" PGVERSION=9.4
 RUN export DEBIAN_FRONTEND=noninteractive \
     && apt-get update \
     && for version in ${PGOLDVERSIONS} ${PGVERSION}; do \
