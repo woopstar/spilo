@@ -14,7 +14,15 @@ spec:
         application: spilo
         spilo-cluster: *cluster_name
       annotations:
+        # kube2iam should be running in a cluster and
+        # app-spilo role needs to be created in the AWS account
+        # the cluster is running in. It will be used to ship WALs,
+        # and requires access to S3 bucket. See https://github.com/jtblin/kube2iam
+        # for the sts::AssumeRole snippets to build trust relationship
+        # between the kubernetes woker role and the one below.
+        # if you don't use AWS, feel free to remove this annotation.
         iam.amazonaws.com/role: app-spilo
+        # forces the scheduler not to put pods on the same node.
         scheduler.alpha.kubernetes.io/affinity: >
             {
                 "podAntiAffinity": {
@@ -35,6 +43,10 @@ spec:
                  }
             }
     spec:
+      # service account that allows changing endpoints and assigning pod labels
+      # in the given namespace: https://kubernetes.io/docs/user-guide/service-accounts/
+      # not required unless you've changed the default service account in the namespace
+      # used to deploy Spilo
       serviceAccountName: operator
       containers:
       - name: *cluster_name
